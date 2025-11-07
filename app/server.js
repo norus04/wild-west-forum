@@ -12,6 +12,33 @@ const users = [];
 const comments = [];
 const sessions = {};
 
+// Insecure session functions
+function createSession(username) {
+  const sessionId = Math.random().toString(36).slice(2) + Date.now().toString(36);
+  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+  sessions[sessionId] = { username, expires };
+  return { sessionId, expires };
+}
+
+function getSession(sessionId) {
+  if (!sessionId) return null;
+  const session = sessions[sessionId];
+  if (!session) return null;
+
+  if (session.expires < new Date()) {
+    delete sessions[sessionId];
+    return null;
+  }
+
+  return session;
+}
+
+function destroySession(sessionId) {
+  if (sessionId && sessions[sessionId]) {
+    delete sessions[sessionId];
+  }
+}
+
 // View engine
 app.engine('hbs', exphbs.engine({
   extname: 'hbs',
