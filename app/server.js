@@ -54,6 +54,41 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// currentUser populated with wild_cookie if valid
+app.use((req, res, next) => {
+  res.locals.currentUser = null;
+  req.currentUser = null;
+
+  const raw = req.cookies && req.cookies.wild_cookie;
+  if (!raw) return next();
+
+  try {
+    const data = JSON.parse(raw); // username, sessionId, auth, expires
+    const session = getSession(data.sessionId);
+
+    if (data.auth && session && session.username === data.username) {
+      req.currentUser = { username: data.username };
+      res.locals.currentUser = req.currentUser;
+    } else {
+      // bad or expired: clear
+      res.clearCookie('wild_cookie');
+    }
+  } catch (e) {
+    // malformed: clear
+    res.clearCookie('wild_cookie');
+  }
+
+  next();
+});
+
+// Helper function to require login
+function requireLogin(req, res, next) {
+  if (!req.currentUser) {
+    return res.status(401).send('Please log in.');
+  }
+  next();
+}
+
 app.get('/', (req, res) => {
   res.send('Wild West Forum is running.');
 });
