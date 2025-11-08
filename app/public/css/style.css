@@ -1,0 +1,154 @@
+/* Base layout */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f4f2e9;
+  color: #222;
+  font-family: "Verdana", "Geneva", sans-serif;
+  font-size: 14px;
+}
+
+.container {
+  width: 90%;
+  max-width: 800px;
+  margin: 2rem auto;
+  background: #fffefa;
+  border: 1px solid #c2bca8;
+  padding: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Navigation bar */
+.nav {
+  background-color: #e0ddcc;
+  border-bottom: 2px solid #b5b09a;
+  padding: 0.5rem 1rem;
+  font-family: "Trebuchet MS", sans-serif;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #004488;
+  font-weight: bold;
+}
+
+.nav a:hover {
+  color: #cc6600;
+  text-decoration: underline;
+}
+
+.nav-user {
+  margin-left: auto;
+  font-style: italic;
+  color: #555;
+}
+
+.inline-form {
+  display: inline;
+  margin-left: 0.5rem;
+}
+
+button {
+  background: #ddd9c3;
+  border: 1px solid #aaa;
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+button:hover {
+  background: #e9e5cf;
+}
+
+/* Headings and text */
+h1, h2, h3 {
+  font-family: "Georgia", "Times New Roman", serif;
+  color: #2f2417;
+  border-bottom: 1px solid #b7b2a3;
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+a {
+  color: #004488;
+}
+
+a:hover {
+  color: #cc6600;
+}
+
+/* Error and message styles */
+.error {
+  color: #b40000;
+  background: #fff0f0;
+  border: 1px solid #e4b2b2;
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.message {
+  color: #225500;
+  background: #f2fff2;
+  border: 1px solid #b5d8b5;
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Comments list */
+.comments-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.comments-list li {
+  background: #f9f8f3;
+  border: 1px solid #c2bca8;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.comments-list li strong {
+  color: #663300;
+}
+
+/* Forms */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+  border: 1px solid #b7b2a3;
+  padding: 0.5rem;
+  background: #fffef9;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+textarea {
+  resize: vertical;
+}
+
+label {
+  font-weight: bold;
+  color: #333;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.85rem;
+  background-color: #e0ddcc;
+  color: #555;
+  border-top: 1px solid #b5b09a;
+}
