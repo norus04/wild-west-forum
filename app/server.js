@@ -179,7 +179,7 @@ app.post('/comment', requireLogin, (req, res) => {
     createdAt: new Date().toISOString()
   });
 
-  res.send('Comment added.');
+  res.send('Comment posted.');
 });
 
 app.listen(PORT, () => {
