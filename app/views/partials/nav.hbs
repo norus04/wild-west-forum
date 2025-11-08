@@ -3,8 +3,8 @@
   <a href="/comments">Comments</a>
 
   {{#if currentUser}}
-    <a href="/comment/new">New Comment</a>
-    <span class="nav-user">Howdy, {{currentUser.username}}</span>
+    <a href="/comment/new">Post</a>
+    <span class="nav-user">Hello, {{currentUser.username}}</span>
     <form action="/logout" method="POST" class="inline-form">
       <button type="submit">Logout</button>
     </form>

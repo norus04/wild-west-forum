@@ -91,39 +91,42 @@ function requireLogin(req, res, next) {
 
 // Home
 app.get('/', (req, res) => {
-  if (req.currentUser) {
-    res.send(`Hello, ${req.currentUser.username}. Wild West Forum.`);
-  } else {
-    res.send('Please register or login.');
-  }
+  res.render('home');
 });
 
 // Register
+app.get('/register', (req, res) => {
+  res.render('register');
+});
+
 app.post('/register', (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.status(400).send('Username & password please...');
+    return res.status(400).render('register', { error: 'Username & password please...' });
   }
 
   const existing = users.find(u => u.username === username);
   if (existing) {
-    return res.status(400).send('Username already taken.');
+    return res.status(400).render('register', { error: 'Username already taken.' });
   }
 
-  // Store plaintext
   users.push({ username, password });
 
-  res.send('Registered. Now navigate to /login.');
+  res.render('login', { message: 'Registered. Please log in.' });
 });
 
 // Login
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
   const user = users.find(u => u.username === username && u.password === password);
   if (!user) {
-    return res.status(401).send('Invalid username or password.');
+    return res.status(401).render('login', { error: 'Invalid username or password.' });
   }
 
   const { sessionId, expires } = createSession(user.username);
@@ -140,7 +143,7 @@ app.post('/login', (req, res) => {
     maxAge: 24 * 60 * 60 * 1000
   });
 
-  res.send('Logged in.');
+  res.redirect('/');
 });
 
 // Logout
@@ -151,26 +154,31 @@ app.post('/logout', (req, res) => {
     try {
       const data = JSON.parse(raw);
       destroySession(data.sessionId);
-    } catch (e) {
-      // Ignore
-    }
+    } catch (e) {}
   }
 
   res.clearCookie('wild_cookie');
-  res.send('Logged out.');
+  res.redirect('/');
 });
 
 // View comments
 app.get('/comments', (req, res) => {
-  res.json(comments);
+  res.render('comments', { comments });
 });
 
 // Post comment
+app.get('/comment/new', (req, res) => {
+  if (!req.currentUser) {
+    return res.render('login', { error: 'Log in to post a comment.' });
+  }
+  res.render('post');
+});
+
 app.post('/comment', requireLogin, (req, res) => {
   const { text } = req.body;
 
   if (!text) {
-    return res.status(400).send('No empty comment.');
+    return res.status(400).render('post', { error: 'No empty comment.' });
   }
 
   comments.push({
@@ -179,7 +187,7 @@ app.post('/comment', requireLogin, (req, res) => {
     createdAt: new Date().toISOString()
   });
 
-  res.send('Comment posted.');
+  res.redirect('/comments');
 });
 
 app.listen(PORT, () => {
