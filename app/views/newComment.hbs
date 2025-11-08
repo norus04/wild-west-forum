@@ -1,0 +1,10 @@
+<h1>New Comment</h1>
+
+{{#if error}}<p class="error">{{error}}</p>{{/if}}
+
+<form action="/comment" method="POST">
+  <label>Comment
+    <textarea name="text" rows="4"></textarea>
+  </label>
+  <button type="submit">Post Comment</button>
+</form>
