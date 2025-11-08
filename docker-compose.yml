@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  app:
+    build: ./app
+    container_name: wild-west-forum-app
+
+  nginx:
+    build: ./nginx
+    container_name: wild-west-forum-nginx
+    ports:
+      - "8383:80"
+    depends_on:
+      - app
