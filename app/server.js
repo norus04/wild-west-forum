@@ -12,10 +12,10 @@ const users = [];
 const comments = [];
 const sessions = {};
 
-// Insecure session functions
+// Session functions
 function createSession(username) {
   const sessionId = Math.random().toString(36).slice(2) + Date.now().toString(36);
-  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
   sessions[sessionId] = { username, expires };
   return { sessionId, expires };
 }
@@ -89,8 +89,97 @@ function requireLogin(req, res, next) {
   next();
 }
 
+// Home
 app.get('/', (req, res) => {
-  res.send('Wild West Forum is running.');
+  if (req.currentUser) {
+    res.send(`Hello, ${req.currentUser.username}. Wild West Forum.`);
+  } else {
+    res.send('Please register or login.');
+  }
+});
+
+// Register
+app.post('/register', (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).send('Username & password please...');
+  }
+
+  const existing = users.find(u => u.username === username);
+  if (existing) {
+    return res.status(400).send('Username already taken.');
+  }
+
+  // Store plaintext
+  users.push({ username, password });
+
+  res.send('Registered. Now navigate to /login.');
+});
+
+// Login
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  const user = users.find(u => u.username === username && u.password === password);
+  if (!user) {
+    return res.status(401).send('Invalid username or password.');
+  }
+
+  const { sessionId, expires } = createSession(user.username);
+
+  // Cookie data
+  const cookieData = {
+    username: user.username,
+    sessionId,
+    auth: true,
+    expires: expires.toISOString()
+  };
+
+  res.cookie('wild_cookie', JSON.stringify(cookieData), {
+    maxAge: 24 * 60 * 60 * 1000
+  });
+
+  res.send('Logged in.');
+});
+
+// Logout
+app.post('/logout', (req, res) => {
+  const raw = req.cookies && req.cookies.wild_cookie;
+
+  if (raw) {
+    try {
+      const data = JSON.parse(raw);
+      destroySession(data.sessionId);
+    } catch (e) {
+      // Ignore
+    }
+  }
+
+  res.clearCookie('wild_cookie');
+  res.send('Logged out.');
+});
+
+// View comments
+app.get('/comments', (req, res) => {
+  res.json(comments);
+});
+
+// Post comment
+app.post('/comment', requireLogin, (req, res) => {
+  const { text } = req.body;
+
+  if (!text) {
+    return res.status(400).send('No empty comment.');
+  }
+
+  comments.push({
+    author: req.currentUser.username,
+    text,
+    createdAt: new Date().toISOString()
+  });
+
+  res.send('Comment added.');
 });
 
 app.listen(PORT, () => {
